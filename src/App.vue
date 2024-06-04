@@ -11,6 +11,9 @@ const ratings = [1, 2, 3, 4, 5]
   <div class="app">
     <div class="movie-list">
       <div class="movie-item" v-for="movie in movies" :key="movie.id">
+        <StarIcon
+            class="movie-item-star-icon-large"
+        />
         <div class="movie-item-image-wrapper">
           <img :src="movie.image" class="movie-item-image" alt="" />
         </div>
@@ -32,7 +35,7 @@ const ratings = [1, 2, 3, 4, 5]
           </div>
           <div class="movie-item-rating-wrapper">
             <span class="movie-item-rating-text">
-              Rating: ({{ movie.rating }}/5)
+              Rating: ({{ movie.rating ?? '-' }}/5)
             </span>
 
             <button
