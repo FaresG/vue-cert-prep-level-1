@@ -4,6 +4,7 @@ import {ref} from "vue";
 import { StarIcon } from "@heroicons/vue/24/solid";
 
 const movies = ref(items)
+const ratings = [1, 2, 3, 4, 5]
 </script>
 
 <template>
@@ -33,11 +34,18 @@ const movies = ref(items)
             <span class="movie-item-rating-text">
               Rating: ({{ movie.rating }}/5)
             </span>
-            <StarIcon
-                v-for="star in movie.rating"
-                :key="`star-${star}`"
+
+            <button
+                v-for="rating in ratings"
+                @click="movie.rating = rating"
+                :disabled="rating === movie.rating"
+                :class="{'cursor-not-allowed': rating === movie.rating}"
+            >
+              <StarIcon
                 class="movie-item-star-icon"
-            />
+                :class="{ '!text-gray-500': rating > movie.rating }"
+              />
+            </button>
           </div>
         </div>
       </div>
