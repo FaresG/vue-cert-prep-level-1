@@ -61,3 +61,22 @@
 .movie-item-star-icon {
     @apply h-5 w-5 text-yellow-500;
 }
+
+.movie-item-star-wrapper {
+    @apply absolute top-0 right-0;
+}
+
+.movie-item-star-content-wrapper {
+    @apply absolute inset-0 flex items-center justify-center text-center;
+}
+
+.movie-item-star-rating-icon {
+    @apply h-16 w-16;
+}
+
+.movie-item-star-content-rating-rated {
+    @apply text-xl text-yellow-800;
+}
+.movie-item-star-content-rating-not-rated {
+    @apply text-xl text-gray-400;
+}

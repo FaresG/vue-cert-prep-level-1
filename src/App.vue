@@ -12,6 +12,20 @@ const ratings = [1, 2, 3, 4, 5]
     <div class="movie-list">
       <div class="movie-item" v-for="movie in movies" :key="movie.id">
         <div class="movie-item-image-wrapper">
+          <div class="movie-item-star-wrapper">
+            <StarIcon
+                class="movie-item-star-rating-icon"
+                :class="[movie.rating ? 'text-yellow-500' : 'text-gray-500']"
+            />
+            <div class="movie-item-star-content-wrapper">
+              <span
+                  v-if="movie.rating"
+                  :class="[movie.rating ? 'movie-item-star-content-rating-rated' : 'movie-item-star-content-rating-not-rated']"
+              >
+                {{ movie.rating ? movie.rating : '-' }}
+              </span>
+            </div>
+          </div>
           <img :src="movie.image" class="movie-item-image" alt="" />
         </div>
 
@@ -32,7 +46,7 @@ const ratings = [1, 2, 3, 4, 5]
           </div>
           <div class="movie-item-rating-wrapper">
             <span class="movie-item-rating-text">
-              Rating: ({{ movie.rating }}/5)
+              Rating: ({{ movie.rating ?? '-' }}/5)
             </span>
 
             <button
