@@ -80,3 +80,41 @@
 .movie-item-star-content-rating-not-rated {
     @apply text-xl text-gray-400;
 }
+
+.create-form {
+    @apply backdrop-blur w-screen h-screen absolute top-0 flex justify-center items-center;
+}
+
+.create-form form {
+    @apply min-w-[600px] bg-slate-600 p-8 rounded text-white
+}
+
+.form-group:not(:last-of-type) {
+    @apply mb-4
+}
+
+.form-group label {
+    @apply block;
+}
+
+.form-group input, 
+.form-group textarea, 
+.form-group select {
+    @apply w-full bg-slate-900 rounded px-2 py-1;
+}
+
+.button {
+    @apply px-4 py-2 rounded hover:opacity-80 bg-blue-500 text-white
+}
+
+.button[type="button"] {
+    @apply bg-slate-500;
+}
+
+.invalid-input {
+    @apply border border-red-600
+}
+
+.invalid-input-text {
+    @apply text-sm text-red-600 my-1
+}
