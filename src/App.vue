@@ -49,6 +49,13 @@ const averageRating = computed(() => {
 // Edit form
 const selectedMovie = ref({})
 const isEditFormVisible = ref(false)
+const openEditModal = (movieId) => {
+  selectedMovie.value = movies.value.find(movie => {
+    return movie.id = movieId
+  })
+  isEditFormVisible.value = true
+  console.log(selectedMovie.value.id)
+}
 </script>
 
 <template>
@@ -133,7 +140,7 @@ const isEditFormVisible = ref(false)
           <div class="movie-item-crud-wrapper">
             <button
               class="border border-black rounded-full p-1"
-              @click="isEditFormVisible = true"
+              @click="openEditModal(movie.id)"
             >
               <PencilIcon class="w-[18px] text-black" />
             </button>
