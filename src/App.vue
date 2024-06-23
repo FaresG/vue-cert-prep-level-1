@@ -1,7 +1,7 @@
 <script setup>
 import { items } from "./movies.json";
-import { reactive, ref } from "vue";
-import { StarIcon } from "@heroicons/vue/24/solid";
+import { computed, reactive, ref } from "vue";
+import { StarIcon, TrashIcon, PencilIcon } from "@heroicons/vue/24/solid";
 
 const movies = ref(items);
 const ratings = [1, 2, 3, 4, 5];
@@ -14,6 +14,7 @@ const newMovie = ref({
   description: "",
   genres: [],
   inTheatres: false,
+  rating: 0,
 });
 const invalidInputs = reactive({
   name: false,
@@ -22,24 +23,55 @@ const invalidInputs = reactive({
   inTheatres: false,
 });
 const submitCreateMovieForm = () => {
-  console.log('submit form')
+  console.log("submit form");
   if (newMovie.value.name === "") {
     invalidInputs.name = true;
     return;
   }
-  newMovie.value.id = movies.value.length + 1
-  movies.value.push(newMovie.value)
-  isCreateFormVisible.value = false
+  newMovie.value.id = movies.value.length + 1;
+  movies.value.push(newMovie.value);
+  isCreateFormVisible.value = false;
 };
+
+// metrics
+const totalMovies = computed(() => {
+  return movies.value.length;
+});
+
+const averageRating = computed(() => {
+  let total = 0;
+  movies.value.forEach((movie) => {
+    total += movie.rating;
+  });
+  return (total / totalMovies.value).toFixed(1);
+});
+
+// Edit form
+const selectedMovie = ref({})
+const isEditFormVisible = ref(false)
 </script>
 
 <template>
-  <div class="flex">
-    <button class="button ml-auto" @click="isCreateFormVisible = true">
-      Add movie
-    </button>
-  </div>
   <div class="app">
+    <div class="flex justify-between w-full">
+      <div class="flex gap-3 font-bold">
+        <span
+          >Total Movies: <span>{{ totalMovies }}</span></span
+        >
+        <span>/</span>
+        <span
+          >Average Rating: <span>{{ averageRating }}</span></span
+        >
+      </div>
+      <div class="flex gap-3">
+        <button class="button" @click="isCreateFormVisible = true">
+          Reset ratings
+        </button>
+        <button class="button" @click="isCreateFormVisible = true">
+          Add movie
+        </button>
+      </div>
+    </div>
     <div class="movie-list">
       <div class="movie-item" v-for="movie in movies" :key="movie.id">
         <div class="movie-item-image-wrapper">
@@ -92,8 +124,21 @@ const submitCreateMovieForm = () => {
             >
               <StarIcon
                 class="movie-item-star-icon"
-                :class="{ '!text-gray-500': !movie.rating || rating > movie.rating }"
+                :class="{
+                  '!text-gray-500': !movie.rating || rating > movie.rating,
+                }"
               />
+            </button>
+          </div>
+          <div class="movie-item-crud-wrapper">
+            <button
+              class="border border-black rounded-full p-1"
+              @click="isEditFormVisible = true"
+            >
+              <PencilIcon class="w-[18px] text-black" />
+            </button>
+            <button class="border border-red-600 rounded-full p-1">
+              <TrashIcon class="w-[18px] text-red-600" />
             </button>
           </div>
         </div>
@@ -102,6 +147,59 @@ const submitCreateMovieForm = () => {
   </div>
   <div class="create-form" v-show="isCreateFormVisible">
     <form @submit.prevent="submitCreateMovieForm()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          v-model="newMovie.name"
+          type="text"
+          :class="{ 'invalid-input': invalidInputs.name }"
+          @keydown="invalidInputs.name = false"
+        />
+        <p class="invalid-input-text" v-show="invalidInputs.name">
+          Name is required
+        </p>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          v-model="newMovie.description"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="image">Image</label>
+        <input id="image" v-model="newMovie.image" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="genres">Genres</label>
+        <select id="genres" v-model="newMovie.genres" multiple>
+          <option value="drama">Drama</option>
+          <option value="crime">Crime</option>
+          <option value="action">Action</option>
+          <option value="comedy">Comedy</option>
+          <option value="adventure">Adventure</option>
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <input type="checkbox" />
+        <span>In theaters</span>
+      </div>
+      <div class="flex justify-between mt-8">
+        <button
+          class="button"
+          type="button"
+          @click="isCreateFormVisible = false"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="button">Create</button>
+      </div>
+    </form>
+  </div>
+  <div class="edit-form" v-show="isEditFormVisible">
+    <form @submit.prevent="submitEditMovieForm()">
       <div class="form-group">
         <label for="name">Name</label>
         <input
