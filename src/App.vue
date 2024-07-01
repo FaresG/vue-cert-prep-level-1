@@ -51,10 +51,22 @@ const selectedMovie = ref({})
 const isEditFormVisible = ref(false)
 const openEditModal = (movieId) => {
   selectedMovie.value = movies.value.find(movie => {
-    return movie.id = movieId
+    return movie.id === movieId
   })
   isEditFormVisible.value = true
-  console.log(selectedMovie.value.id)
+}
+const submitEditMovieForm = () => {
+  if (!selectedMovie.value.id) {
+    // TODO: Display error
+    return
+  }
+  let movie = movies.value.find(movie => { return movie.id === selectedMovie.value.id});
+  if (!movie.id) {
+    // TODO Display error
+    return
+  }
+  Object.assign(movie, movies.value)
+  isEditFormVisible.value = false
 }
 </script>
 
@@ -71,7 +83,7 @@ const openEditModal = (movieId) => {
         >
       </div>
       <div class="flex gap-3">
-        <button class="button" @click="isCreateFormVisible = true">
+        <button class="button" @click="">
           Reset ratings
         </button>
         <button class="button" @click="isCreateFormVisible = true">
@@ -141,10 +153,11 @@ const openEditModal = (movieId) => {
             <button
               class="border border-black rounded-full p-1"
               @click="openEditModal(movie.id)"
+              title="Edit movie"
             >
               <PencilIcon class="w-[18px] text-black" />
             </button>
-            <button class="border border-red-600 rounded-full p-1">
+            <button class="border border-red-600 rounded-full p-1" title="Delete movie">
               <TrashIcon class="w-[18px] text-red-600" />
             </button>
           </div>
@@ -152,7 +165,7 @@ const openEditModal = (movieId) => {
       </div>
     </div>
   </div>
-  <div class="create-form" v-show="isCreateFormVisible">
+  <div class="pop-up-form" v-show="isCreateFormVisible">
     <form @submit.prevent="submitCreateMovieForm()">
       <div class="form-group">
         <label for="name">Name</label>
@@ -205,13 +218,13 @@ const openEditModal = (movieId) => {
       </div>
     </form>
   </div>
-  <div class="edit-form" v-show="isEditFormVisible">
+  <div class="pop-up-form" v-show="isEditFormVisible">
     <form @submit.prevent="submitEditMovieForm()">
       <div class="form-group">
         <label for="name">Name</label>
         <input
           id="name"
-          v-model="newMovie.name"
+          v-model="selectedMovie.name"
           type="text"
           :class="{ 'invalid-input': invalidInputs.name }"
           @keydown="invalidInputs.name = false"
@@ -224,37 +237,37 @@ const openEditModal = (movieId) => {
         <label for="description">Description</label>
         <textarea
           id="description"
-          v-model="newMovie.description"
+          v-model="selectedMovie.description"
           rows="3"
         ></textarea>
       </div>
       <div class="form-group">
         <label for="image">Image</label>
-        <input id="image" v-model="newMovie.image" type="text" />
+        <input id="image" v-model="selectedMovie.image" type="text" />
       </div>
       <div class="form-group">
         <label for="genres">Genres</label>
-        <select id="genres" v-model="newMovie.genres" multiple>
-          <option value="drama">Drama</option>
-          <option value="crime">Crime</option>
-          <option value="action">Action</option>
-          <option value="comedy">Comedy</option>
-          <option value="adventure">Adventure</option>
+        <select id="genres" v-model="selectedMovie.genres" multiple>
+          <option value="Drama">Drama</option>
+          <option value="Crime">Crime</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Adventure">Adventure</option>
         </select>
       </div>
       <div class="flex gap-2">
-        <input type="checkbox" />
+        <input type="checkbox" v-model="selectedMovie.inTheaters" />
         <span>In theaters</span>
       </div>
       <div class="flex justify-between mt-8">
         <button
           class="button"
           type="button"
-          @click="isCreateFormVisible = false"
+          @click="isEditFormVisible = false"
         >
           Cancel
         </button>
-        <button type="submit" class="button">Create</button>
+        <button type="submit" class="button">Edit</button>
       </div>
     </form>
   </div>

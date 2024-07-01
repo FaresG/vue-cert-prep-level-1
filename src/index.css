@@ -85,11 +85,11 @@
     @apply text-xl text-gray-400;
 }
 
-.create-form {
-    @apply backdrop-blur w-screen h-screen absolute top-0 flex justify-center items-center;
+.pop-up-form {
+    @apply backdrop-blur w-screen h-screen fixed top-0 flex justify-center items-center;
 }
 
-.create-form form {
+.pop-up-form form {
     @apply min-w-[600px] bg-slate-600 p-8 rounded text-white
 }
 
