@@ -43,6 +43,8 @@ const averageRating = computed(() => {
   movies.value.forEach((movie) => {
     total += movie.rating;
   });
+  if (totalMovies.value === 0) return 0
+
   return (total / totalMovies.value).toFixed(1);
 });
 
@@ -67,6 +69,11 @@ const submitEditMovieForm = () => {
   }
   Object.assign(movie, movies.value)
   isEditFormVisible.value = false
+}
+
+// delete movie
+const deleteMovie = (movieId) => {
+  movies.value = movies.value.filter(movie => movie.id !== movieId)
 }
 </script>
 
@@ -157,7 +164,7 @@ const submitEditMovieForm = () => {
             >
               <PencilIcon class="w-[18px] text-black" />
             </button>
-            <button class="border border-red-600 rounded-full p-1" title="Delete movie">
+            <button class="border border-red-600 rounded-full p-1" title="Delete movie" @click="deleteMovie(movie.id)">
               <TrashIcon class="w-[18px] text-red-600" />
             </button>
           </div>
