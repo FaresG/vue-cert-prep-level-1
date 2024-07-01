@@ -40,7 +40,7 @@ const totalMovies = computed(() => {
 
 const averageRating = computed(() => {
   let total = 0;
-  movies.value.forEach((movie) => {
+  movies.value.forEach(movie => {
     total += movie.rating;
   });
   if (totalMovies.value === 0) return 0
@@ -51,7 +51,7 @@ const averageRating = computed(() => {
 // Edit form
 const selectedMovie = ref({})
 const isEditFormVisible = ref(false)
-const openEditModal = (movieId) => {
+const openEditModal = movieId => {
   selectedMovie.value = movies.value.find(movie => {
     return movie.id === movieId
   })
@@ -72,8 +72,17 @@ const submitEditMovieForm = () => {
 }
 
 // delete movie
-const deleteMovie = (movieId) => {
+const deleteMovie = movieId => {
   movies.value = movies.value.filter(movie => movie.id !== movieId)
+}
+
+// reset ratings
+const resetRatings = () => {
+  if (movies.value.length) {
+    movies.value.forEach(movie => {
+      movie.rating = 0
+    })
+  }
 }
 </script>
 
@@ -90,7 +99,7 @@ const deleteMovie = (movieId) => {
         >
       </div>
       <div class="flex gap-3">
-        <button class="button" @click="">
+        <button class="button" @click="resetRatings()">
           Reset ratings
         </button>
         <button class="button" @click="isCreateFormVisible = true">
