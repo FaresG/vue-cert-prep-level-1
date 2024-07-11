@@ -1,10 +1,9 @@
 <script setup>
 import { items } from "./movies.json";
 import { computed, reactive, ref } from "vue";
-import { StarIcon, TrashIcon, PencilIcon } from "@heroicons/vue/24/solid";
+import MovieItem from "@/components/MovieItem.vue";
 
 const movies = ref(items);
-const ratings = [1, 2, 3, 4, 5];
 
 // Create movie form
 const isCreateFormVisible = ref(false);
@@ -48,6 +47,15 @@ const averageRating = computed(() => {
   return (total / totalMovies.value).toFixed(1);
 });
 
+const updateRating = (data) => {
+  let movie = movies.value.find((movie) => {
+    return movie.id === data.id
+  })
+  if (movie.id) {
+    movie.rating = data.rating
+  }
+}
+
 // Edit form
 const selectedMovie = ref({})
 const isEditFormVisible = ref(false)
@@ -62,7 +70,9 @@ const submitEditMovieForm = () => {
     // TODO: Display error
     return
   }
-  let movie = movies.value.find(movie => { return movie.id === selectedMovie.value.id});
+  let movie = movies.value.find(movie => {
+    return movie.id === selectedMovie.value.id
+  });
   if (!movie.id) {
     // TODO Display error
     return
@@ -89,14 +99,10 @@ const resetRatings = () => {
 <template>
   <div class="app">
     <div class="flex justify-between w-full">
-      <div class="flex gap-3 font-bold">
-        <span
-          >Total Movies: <span>{{ totalMovies }}</span></span
-        >
+      <div class="flex gap-3 font-bold text-white">
+        <span>Total Movies: <span>{{ totalMovies }}</span></span>
         <span>/</span>
-        <span
-          >Average Rating: <span>{{ averageRating }}</span></span
-        >
+        <span>Average Rating: <span>{{ averageRating }}</span></span>
       </div>
       <div class="flex gap-3">
         <button class="button" @click="resetRatings()">
@@ -108,101 +114,22 @@ const resetRatings = () => {
       </div>
     </div>
     <div class="movie-list">
-      <div class="movie-item" v-for="movie in movies" :key="movie.id">
-        <div class="movie-item-image-wrapper">
-          <div class="movie-item-star-wrapper">
-            <StarIcon
-              class="movie-item-star-rating-icon"
-              :class="[movie.rating ? 'text-yellow-500' : 'text-gray-500']"
-            />
-            <div class="movie-item-star-content-wrapper">
-              <span
-                v-if="movie.rating"
-                :class="[
-                  movie.rating
-                    ? 'movie-item-star-content-rating-rated'
-                    : 'movie-item-star-content-rating-not-rated',
-                ]"
-              >
-                {{ movie.rating ? movie.rating : "-" }}
-              </span>
-            </div>
-          </div>
-          <img :src="movie.image" class="movie-item-image" alt="" />
-        </div>
-
-        <div class="movie-item-content-wrapper">
-          <div class="movie-item-title-wrapper">
-            <h3 class="movie-item-title">{{ movie.name }}</h3>
-            <div class="movie-item-genres-wrapper">
-              <span
-                v-for="genre in movie.genres"
-                :key="`${movie.id}-${genre}`"
-                class="movie-item-genre-tag"
-                >{{ genre }}</span
-              >
-            </div>
-          </div>
-          <div class="movie-item-description-wrapper">
-            <p class="movie-item-description">{{ movie.description }}</p>
-          </div>
-          <div class="movie-item-rating-wrapper">
-            <span class="movie-item-rating-text">
-              Rating: ({{ movie.rating ?? "-" }}/5)
-            </span>
-
-            <button
-              v-for="rating in ratings"
-              @click="movie.rating = rating"
-              :disabled="rating === movie.rating"
-              :class="{ 'cursor-not-allowed': rating === movie.rating }"
-            >
-              <StarIcon
-                class="movie-item-star-icon"
-                :class="{
-                  '!text-gray-500': !movie.rating || rating > movie.rating,
-                }"
-              />
-            </button>
-          </div>
-          <div class="movie-item-crud-wrapper">
-            <button
-              class="border border-black rounded-full p-1"
-              @click="openEditModal(movie.id)"
-              title="Edit movie"
-            >
-              <PencilIcon class="w-[18px] text-black" />
-            </button>
-            <button class="border border-red-600 rounded-full p-1" title="Delete movie" @click="deleteMovie(movie.id)">
-              <TrashIcon class="w-[18px] text-red-600" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <MovieItem v-for="(movie, key) in movies" :key="key" :movie="movie" @update-rating="updateRating" />
     </div>
   </div>
-  <div class="pop-up-form" v-show="isCreateFormVisible">
+  <div v-show="isCreateFormVisible" class="pop-up-form">
     <form @submit.prevent="submitCreateMovieForm()">
       <div class="form-group">
         <label for="name">Name</label>
-        <input
-          id="name"
-          v-model="newMovie.name"
-          type="text"
-          :class="{ 'invalid-input': invalidInputs.name }"
-          @keydown="invalidInputs.name = false"
-        />
-        <p class="invalid-input-text" v-show="invalidInputs.name">
+        <input id="name" v-model="newMovie.name" :class="{ 'invalid-input': invalidInputs.name }" type="text"
+          @keydown="invalidInputs.name = false" />
+        <p v-show="invalidInputs.name" class="invalid-input-text">
           Name is required
         </p>
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <textarea
-          id="description"
-          v-model="newMovie.description"
-          rows="3"
-        ></textarea>
+        <textarea id="description" v-model="newMovie.description" rows="3"></textarea>
       </div>
       <div class="form-group">
         <label for="image">Image</label>
@@ -223,39 +150,26 @@ const resetRatings = () => {
         <span>In theaters</span>
       </div>
       <div class="flex justify-between mt-8">
-        <button
-          class="button"
-          type="button"
-          @click="isCreateFormVisible = false"
-        >
+        <button class="button" type="button" @click="isCreateFormVisible = false">
           Cancel
         </button>
-        <button type="submit" class="button">Create</button>
+        <button class="button" type="submit">Create</button>
       </div>
     </form>
   </div>
-  <div class="pop-up-form" v-show="isEditFormVisible">
+  <div v-show="isEditFormVisible" class="pop-up-form">
     <form @submit.prevent="submitEditMovieForm()">
       <div class="form-group">
         <label for="name">Name</label>
-        <input
-          id="name"
-          v-model="selectedMovie.name"
-          type="text"
-          :class="{ 'invalid-input': invalidInputs.name }"
-          @keydown="invalidInputs.name = false"
-        />
-        <p class="invalid-input-text" v-show="invalidInputs.name">
+        <input id="name" v-model="selectedMovie.name" :class="{ 'invalid-input': invalidInputs.name }" type="text"
+          @keydown="invalidInputs.name = false" />
+        <p v-show="invalidInputs.name" class="invalid-input-text">
           Name is required
         </p>
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <textarea
-          id="description"
-          v-model="selectedMovie.description"
-          rows="3"
-        ></textarea>
+        <textarea id="description" v-model="selectedMovie.description" rows="3"></textarea>
       </div>
       <div class="form-group">
         <label for="image">Image</label>
@@ -272,18 +186,14 @@ const resetRatings = () => {
         </select>
       </div>
       <div class="flex gap-2">
-        <input type="checkbox" v-model="selectedMovie.inTheaters" />
+        <input v-model="selectedMovie.inTheaters" type="checkbox" />
         <span>In theaters</span>
       </div>
       <div class="flex justify-between mt-8">
-        <button
-          class="button"
-          type="button"
-          @click="isEditFormVisible = false"
-        >
+        <button class="button" type="button" @click="isEditFormVisible = false">
           Cancel
         </button>
-        <button type="submit" class="button">Edit</button>
+        <button class="button" type="submit">Edit</button>
       </div>
     </form>
   </div>
