@@ -2,35 +2,28 @@
 import { items } from "./movies.json";
 import { computed, reactive, ref } from "vue";
 import MovieItem from "@/components/MovieItem.vue";
+import MovieForm from "@/components/MovieForm.vue";
 
 const movies = ref(items);
 
 // Create movie form
-const isCreateFormVisible = ref(false);
-const newMovie = ref({
-  id: 0,
-  name: "",
-  description: "",
-  genres: [],
-  inTheatres: false,
-  rating: 0,
-});
-const invalidInputs = reactive({
-  name: false,
-  description: false,
-  genres: false,
-  inTheatres: false,
-});
-const submitCreateMovieForm = () => {
-  console.log("submit form");
-  if (newMovie.value.name === "") {
-    invalidInputs.name = true;
-    return;
-  }
-  newMovie.value.id = movies.value.length + 1;
-  movies.value.push(newMovie.value);
-  isCreateFormVisible.value = false;
-};
+const isVisible = ref(false);
+const isCreate = ref(false);
+const movie = ref({})
+const createMovie = (newMovie) => {
+  if (!newMovie) return
+
+  newMovie.id = movies.value.length + 1
+  newMovie.rating = 0
+  movies.value.push(newMovie)
+  movie.value = {}
+
+  isVisible.value = false
+}
+const showMovieForm = (create = false) => {
+  isVisible.value = true
+  isCreate.value = create
+}
 
 // metrics
 const totalMovies = computed(() => {
@@ -57,28 +50,16 @@ const updateRating = (data) => {
 }
 
 // Edit form
-const selectedMovie = ref({})
-const isEditFormVisible = ref(false)
-const openEditModal = id => {
-  selectedMovie.value = movies.value.find(movie => {
-    return movie.id === id
-  })
-  isEditFormVisible.value = true
+const openEditForm = (selectedMovie) => {
+  movie.value = selectedMovie
+  isCreate.value = false
+  isVisible.value = true
 }
-const submitEditMovieForm = () => {
-  if (!selectedMovie.value.id) {
-    // TODO: Display error
-    return
-  }
-  let movie = movies.value.find(movie => {
-    return movie.id === selectedMovie.value.id
-  });
-  if (!movie.id) {
-    // TODO Display error
-    return
-  }
-  Object.assign(movie, movies.value)
-  isEditFormVisible.value = false
+const updateMovie = (updatedMovie) => {
+  let index = movies.value.findIndex(movie => movie.id === updatedMovie.id)
+  movies.value[index] = updatedMovie
+
+  isVisible.value = false
 }
 
 // delete movie
@@ -109,7 +90,7 @@ const resetRatings = () => {
         <button class="button" @click="resetRatings()">
           Reset ratings
         </button>
-        <button class="button" @click="isCreateFormVisible = true">
+        <button class="button" @click="showMovieForm(true)">
           Add movie
         </button>
       </div>
@@ -119,89 +100,17 @@ const resetRatings = () => {
           v-for="(movie, key) in movies"
           :key="key" :movie="movie"
           @update:rating="updateRating"
-          @edit="openEditModal"
+          @edit="openEditForm"
           @remove="removeMovie"
       />
     </div>
   </div>
-  <div v-show="isCreateFormVisible" class="pop-up-form">
-    <form @submit.prevent="submitCreateMovieForm()">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input id="name" v-model="newMovie.name" :class="{ 'invalid-input': invalidInputs.name }" type="text"
-          @keydown="invalidInputs.name = false" />
-        <p v-show="invalidInputs.name" class="invalid-input-text">
-          Name is required
-        </p>
-      </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" v-model="newMovie.description" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="image">Image</label>
-        <input id="image" v-model="newMovie.image" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="genres">Genres</label>
-        <select id="genres" v-model="newMovie.genres" multiple>
-          <option value="drama">Drama</option>
-          <option value="crime">Crime</option>
-          <option value="action">Action</option>
-          <option value="comedy">Comedy</option>
-          <option value="adventure">Adventure</option>
-        </select>
-      </div>
-      <div class="flex gap-2">
-        <input type="checkbox" />
-        <span>In theaters</span>
-      </div>
-      <div class="flex justify-between mt-8">
-        <button class="button" type="button" @click="isCreateFormVisible = false">
-          Cancel
-        </button>
-        <button class="button" type="submit">Create</button>
-      </div>
-    </form>
-  </div>
-  <div v-show="isEditFormVisible" class="pop-up-form">
-    <form @submit.prevent="submitEditMovieForm()">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input id="name" v-model="selectedMovie.name" :class="{ 'invalid-input': invalidInputs.name }" type="text"
-          @keydown="invalidInputs.name = false" />
-        <p v-show="invalidInputs.name" class="invalid-input-text">
-          Name is required
-        </p>
-      </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" v-model="selectedMovie.description" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="image">Image</label>
-        <input id="image" v-model="selectedMovie.image" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="genres">Genres</label>
-        <select id="genres" v-model="selectedMovie.genres" multiple>
-          <option value="Drama">Drama</option>
-          <option value="Crime">Crime</option>
-          <option value="Action">Action</option>
-          <option value="Comedy">Comedy</option>
-          <option value="Adventure">Adventure</option>
-        </select>
-      </div>
-      <div class="flex gap-2">
-        <input v-model="selectedMovie.inTheaters" type="checkbox" />
-        <span>In theaters</span>
-      </div>
-      <div class="flex justify-between mt-8">
-        <button class="button" type="button" @click="isEditFormVisible = false">
-          Cancel
-        </button>
-        <button class="button" type="submit">Edit</button>
-      </div>
-    </form>
-  </div>
+  <MovieForm
+      v-model="movie"
+      :is-create="isCreate"
+      :is-visible="isVisible"
+      @create:movie="createMovie"
+      @update:movie="updateMovie"
+      @cancel="isVisible = false"
+  />
 </template>

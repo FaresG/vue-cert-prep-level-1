@@ -107,8 +107,13 @@ body {
 
 .form-group input, 
 .form-group textarea, 
-.form-group select {
+.form-group select,
+.form-group option {
     @apply w-full bg-slate-900 rounded px-2 py-1;
+}
+
+.form-group option {
+    @apply text-white;
 }
 
 .button {

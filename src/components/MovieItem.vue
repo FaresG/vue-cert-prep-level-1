@@ -13,7 +13,7 @@ const removeMovie = () => {
 }
 
 const editMovie = () => {
-  emit('edit', props.movie.id)
+  emit('edit', props.movie)
 }
 </script>
 
