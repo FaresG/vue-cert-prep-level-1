@@ -59,9 +59,9 @@ const updateRating = (data) => {
 // Edit form
 const selectedMovie = ref({})
 const isEditFormVisible = ref(false)
-const openEditModal = movieId => {
+const openEditModal = id => {
   selectedMovie.value = movies.value.find(movie => {
-    return movie.id === movieId
+    return movie.id === id
   })
   isEditFormVisible.value = true
 }
@@ -82,8 +82,9 @@ const submitEditMovieForm = () => {
 }
 
 // delete movie
-const deleteMovie = movieId => {
-  movies.value = movies.value.filter(movie => movie.id !== movieId)
+const removeMovie = (id) => {
+  if (!id) return
+  movies.value = movies.value.filter(movie => movie.id !== id)
 }
 
 // reset ratings
@@ -114,7 +115,13 @@ const resetRatings = () => {
       </div>
     </div>
     <div class="movie-list">
-      <MovieItem v-for="(movie, key) in movies" :key="key" :movie="movie" @update:rating="updateRating" />
+      <MovieItem
+          v-for="(movie, key) in movies"
+          :key="key" :movie="movie"
+          @update:rating="updateRating"
+          @edit="openEditModal"
+          @remove="removeMovie"
+      />
     </div>
   </div>
   <div v-show="isCreateFormVisible" class="pop-up-form">

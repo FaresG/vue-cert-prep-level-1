@@ -8,6 +8,13 @@ const emit = defineEmits(['update:rating', 'edit', 'remove'])
 const updateRating = (rating) => {
   emit('update:rating', { id: props.movie.id, rating })
 }
+const removeMovie = () => {
+  emit('remove', props.movie.id)
+}
+
+const editMovie = () => {
+  emit('edit', props.movie.id)
+}
 </script>
 
 <template>
@@ -52,10 +59,18 @@ const updateRating = (rating) => {
         </button>
       </div>
       <div class="movie-item-crud-wrapper">
-        <button class="border border-black rounded-full p-1" @click="openEditModal(movie.id)" title="Edit movie">
+        <button
+            class="border border-black rounded-full p-1"
+            @click="editMovie()"
+            title="Edit movie"
+        >
           <PencilIcon class="w-[18px] text-black" />
         </button>
-        <button class="border border-red-600 rounded-full p-1" title="Delete movie" @click="deleteMovie(id)">
+        <button
+            class="border border-red-600 rounded-full p-1"
+            title="Delete movie"
+            @click="removeMovie()"
+        >
           <TrashIcon class="w-[18px] text-red-600" />
         </button>
       </div>
