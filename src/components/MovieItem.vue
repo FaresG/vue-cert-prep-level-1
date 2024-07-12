@@ -3,10 +3,10 @@ import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/vue/24/solid";
 
 const ratings = [1, 2, 3, 4, 5];
 const props = defineProps(['movie'])
-const emit = defineEmits(['updateRating'])
+const emit = defineEmits(['update:rating', 'edit', 'remove'])
 
 const updateRating = (rating) => {
-  emit('updateRating', { id: props.id, rating })
+  emit('update:rating', { id: props.movie.id, rating })
 }
 </script>
 

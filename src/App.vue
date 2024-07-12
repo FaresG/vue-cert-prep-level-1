@@ -114,7 +114,7 @@ const resetRatings = () => {
       </div>
     </div>
     <div class="movie-list">
-      <MovieItem v-for="(movie, key) in movies" :key="key" :movie="movie" @update-rating="updateRating" />
+      <MovieItem v-for="(movie, key) in movies" :key="key" :movie="movie" @update:rating="updateRating" />
     </div>
   </div>
   <div v-show="isCreateFormVisible" class="pop-up-form">
