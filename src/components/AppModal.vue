@@ -1,6 +1,15 @@
 <script setup>
 import { XMarkIcon } from "@heroicons/vue/20/solid"
-const props = defineProps(['title', 'isVisible'])
+const props = defineProps({
+  title: {
+    type: String,
+    default: null
+  },
+  isVisible: {
+    type: Boolean,
+    default: false
+  }
+})
 const emit = defineEmits(['close'])
 </script>
 

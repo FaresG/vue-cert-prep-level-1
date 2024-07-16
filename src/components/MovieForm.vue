@@ -1,6 +1,5 @@
 <script setup>
-import {computed, onMounted, reactive} from "vue";
-import AppModal from "@/components/AppModal.vue";
+import {computed, defineAsyncComponent, onMounted, reactive} from "vue";
 
 // for somereason i need to seperate the modelValue from the form's input fields
 const props = defineProps({
@@ -18,6 +17,7 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue', 'cancel'])
+const AppModal = defineAsyncComponent(() => import('./AppModal.vue'))
 
 // Fix bug of movie getting updated when you hit cancel
 const formInputs = computed(() => {
