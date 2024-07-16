@@ -1,5 +1,6 @@
 <script setup>
 import {computed, onMounted, reactive} from "vue";
+import AppModal from "@/components/AppModal.vue";
 
 // for somereason i need to seperate the modelValue from the form's input fields
 const props = defineProps({
@@ -51,7 +52,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-show="isVisible" class="pop-up-form">
+  <AppModal
+    :title="`${isCreate ? 'Create' : 'Edit'} Movie`"
+    :isVisible="isVisible"
+    @close="cancel"
+  >
     <form @submit.prevent="submit">
       <div class="form-group">
         <label for="name">Name</label>
@@ -100,5 +105,5 @@ onMounted(() => {
         <button class="button" type="submit">{{ isCreate ? 'Create' : 'Update' }}</button>
       </div>
     </form>
-  </div>
+  </AppModal>
 </template>

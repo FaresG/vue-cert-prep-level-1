@@ -77,5 +77,3 @@ const editMovie = () => {
     </div>
   </div>
 </template>
-
-<style></style>
