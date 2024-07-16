@@ -1,9 +1,9 @@
 <script setup>
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/vue/24/solid";
 
-const ratings = [1, 2, 3, 4, 5];
 const props = defineProps(['movie'])
 const emit = defineEmits(['update:rating', 'edit', 'remove'])
+
 
 const updateRating = (rating) => {
   emit('update:rating', { id: props.movie.id, rating })
@@ -51,7 +51,7 @@ const editMovie = () => {
           Rating: ({{ movie.rating ?? "-" }}/5)
         </span>
 
-        <button v-for="r in ratings" @click="updateRating(r)" :disabled="movie.rating === r"
+        <button v-for="r in 5" @click="updateRating(r)" :disabled="movie.rating === r"
           :class="{ 'cursor-not-allowed': movie.rating === r }">
           <StarIcon class="movie-item-star-icon" :class="{
             '!text-gray-500': !r || r > movie.rating,

@@ -1,6 +1,6 @@
 <script setup>
+import {computed, reactive, ref, watch} from "vue";
 import { items } from "./movies.json";
-import { computed, reactive, ref } from "vue";
 import MovieItem from "@/components/MovieItem.vue";
 import MovieForm from "@/components/MovieForm.vue";
 
@@ -9,21 +9,41 @@ const movies = ref(items);
 // Create movie form
 const isVisible = ref(false);
 const isCreate = ref(false);
-const movie = ref({})
-const createMovie = (newMovie) => {
-  if (!newMovie) return
-
-  newMovie.id = movies.value.length + 1
-  newMovie.rating = 0
-  movies.value.push(newMovie)
-  movie.value = {}
-
-  isVisible.value = false
-}
-const showMovieForm = (create = false) => {
+const movieForm = reactive({
+  id: 0,
+  name: '',
+  description: '',
+  image: '',
+  rating: 0,
+  genres: [],
+  inTheaters: false
+})
+const showMovieForm = (formInputs, type) => {
+  updateMovieForm(formInputs)
+  isCreate.value = type === 'create'
   isVisible.value = true
-  isCreate.value = create
 }
+const updateMovieForm = (formInputs) => {
+  if (!formInputs) return null
+
+  Object.assign(movieForm, formInputs)
+}
+const resetMovieForm = () => {
+  movieForm.id = 0
+  movieForm.name = ''
+  movieForm.description = ''
+  movieForm.image = ''
+  movieForm.image = ''
+  movieForm.rating = 0
+  movieForm.genres = []
+  movieForm.inTheaters = false
+}
+watch(isVisible, (newValue) => {
+  // reset movie form when it gets closed (via cancel or submit buttons).
+  if (!newValue) {
+    resetMovieForm()
+  }
+})
 
 // metrics
 const totalMovies = computed(() => {
@@ -50,14 +70,16 @@ const updateRating = (data) => {
 }
 
 // Edit form
-const openEditForm = (selectedMovie) => {
-  movie.value = selectedMovie
-  isCreate.value = false
-  isVisible.value = true
-}
-const updateMovie = (updatedMovie) => {
-  let index = movies.value.findIndex(movie => movie.id === updatedMovie.id)
-  movies.value[index] = updatedMovie
+const submitMovieForm = (formInputs) => {
+  if (isCreate.value) {
+    formInputs.id = movies.value.length + 1
+    formInputs.rating = 0
+    movies.value.push(formInputs)
+  }
+  else {
+    let index = movies.value.findIndex(movie => movie.id === formInputs.id)
+    movies.value[index] = formInputs
+  }
 
   isVisible.value = false
 }
@@ -90,27 +112,27 @@ const resetRatings = () => {
         <button class="button" @click="resetRatings()">
           Reset ratings
         </button>
-        <button class="button" @click="showMovieForm(true)">
+        <button class="button" @click="showMovieForm(null, 'create')">
           Add movie
         </button>
       </div>
     </div>
     <div class="movie-list">
       <MovieItem
-          v-for="(movie, key) in movies"
-          :key="key" :movie="movie"
+          v-for="movie in movies"
+          :key="movie.id"
+          :movie="movie"
           @update:rating="updateRating"
-          @edit="openEditForm"
+          @edit="(selectedMovie) => showMovieForm(selectedMovie, 'edit')"
           @remove="removeMovie"
       />
     </div>
   </div>
   <MovieForm
-      v-model="movie"
-      :is-create="isCreate"
-      :is-visible="isVisible"
-      @create:movie="createMovie"
-      @update:movie="updateMovie"
+      :modelValue="movieForm"
+      :isCreate="isCreate"
+      :isVisible="isVisible"
+      @update:modelValue="submitMovieForm"
       @cancel="isVisible = false"
   />
 </template>
