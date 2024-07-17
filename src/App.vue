@@ -128,7 +128,7 @@ const resetRatings = () => {
       />
     </div>
   </div>
-  <MovieForm
+   <MovieForm
       :modelValue="movieForm"
       :isCreate="isCreate"
       :isVisible="isVisible"

@@ -14,18 +14,43 @@ const emit = defineEmits(['close'])
 </script>
 
 <template>
-  <div v-show="isVisible" class="pop-up-form">
-    <div class="modal">
-      <p>
-        <button
-            class="w-[20px] float-right"
-            @click="$emit('close')"
-        >
-          <XMarkIcon />
-        </button>
-      </p>
-      <h1>{{ title }}</h1>
-      <slot></slot>
+  <Transition name="fade">
+    <div v-show="isVisible" class="pop-up-form">
+      <div class="modal">
+        <p>
+          <button
+              class="w-[20px] float-right"
+              @click="$emit('close')"
+          >
+            <XMarkIcon />
+          </button>
+        </p>
+        <h1>{{ title }}</h1>
+        <slot/>
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-from .modal,
+.fade-leave-to .modal {
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+.fade-enter-to .modal,
+.fade-leave-from .modal {
+  transform: translateY(0);
+  opacity: 1;
+}
+</style>
