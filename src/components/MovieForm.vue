@@ -1,5 +1,5 @@
 <script setup>
-import {computed, defineAsyncComponent, onMounted, reactive} from "vue";
+import {computed, defineAsyncComponent, nextTick, onMounted, reactive, ref, watch} from "vue";
 
 // for somereason i need to seperate the modelValue from the form's input fields
 const props = defineProps({
@@ -46,8 +46,18 @@ const submit = () => {
 const cancel = () => {
   emit('cancel')
 }
-onMounted(() => {
-  console.log(props.modelValue)
+
+const nameInput = ref(null)
+
+const focusNameInput = async () => {
+  await nextTick()
+  nameInput.value?.focus()
+}
+
+watch(() => props.isVisible, (newValue) => {
+  if (newValue) {
+    focusNameInput()
+  }
 })
 </script>
 
@@ -66,6 +76,7 @@ onMounted(() => {
             :class="{ 'invalid-input': invalidInputs.name }"
             type="text"
             @keydown="invalidInputs.name = false"
+            ref="nameInput"
         />
         <p
             v-show="invalidInputs.name"

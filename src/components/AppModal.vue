@@ -10,11 +10,14 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'before-enter'])
 </script>
 
 <template>
-  <Transition name="fade">
+  <Transition
+      name="fade"
+      @before-enter="$emit('before-enter')"
+  >
     <div v-show="isVisible" class="pop-up-form">
       <div class="modal">
         <p>
