@@ -1,5 +1,5 @@
 <script setup>
-import {computed, defineAsyncComponent, nextTick, onMounted, reactive, ref, watch} from "vue";
+import {computed, defineAsyncComponent, nextTick, onMounted, onUpdated, reactive, ref, watch} from "vue";
 
 // for somereason i need to seperate the modelValue from the form's input fields
 const props = defineProps({
@@ -47,7 +47,7 @@ const cancel = () => {
   emit('cancel')
 }
 
-const nameInput = ref(null)
+const nameInput = ref()
 
 const focusNameInput = async () => {
   await nextTick()
@@ -72,11 +72,11 @@ watch(() => props.isVisible, (newValue) => {
         <label for="name">Name</label>
         <input
             id="name"
+            ref="nameInput"
             v-model="formInputs.name"
             :class="{ 'invalid-input': invalidInputs.name }"
             type="text"
             @keydown="invalidInputs.name = false"
-            ref="nameInput"
         />
         <p
             v-show="invalidInputs.name"

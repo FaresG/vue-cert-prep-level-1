@@ -1,6 +1,7 @@
 <script setup>
 import { XMarkIcon } from "@heroicons/vue/20/solid"
-const props = defineProps({
+
+defineProps({
   title: {
     type: String,
     default: null
@@ -10,13 +11,13 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['close', 'before-enter'])
+
+defineEmits(['close'])
 </script>
 
 <template>
   <Transition
       name="fade"
-      @before-enter="$emit('before-enter')"
   >
     <div v-show="isVisible" class="pop-up-form">
       <div class="modal">
