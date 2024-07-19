@@ -1,5 +1,6 @@
 <script setup>
-import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/vue/24/solid";
+import { PencilIcon, StarIcon, TrashIcon, EyeIcon } from "@heroicons/vue/24/solid";
+import {useRouter} from "vue-router";
 
 const props = defineProps(['movie'])
 const emit = defineEmits(['update:rating', 'edit', 'remove'])
@@ -73,6 +74,13 @@ const editMovie = () => {
         >
           <TrashIcon class="w-[18px] text-red-600" />
         </button>
+        <RouterLink
+            class="border border-black rounded-full p-1"
+            title="Go to movie"
+            :to="{name: 'movie', params: {id: movie.id}}"
+        >
+          <EyeIcon class="w-[18px] text-black" />
+        </RouterLink>
       </div>
     </div>
   </div>

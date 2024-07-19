@@ -4,7 +4,7 @@
 
 <template>
   <nav>
-    <RouterLink to="/">Movies List</RouterLink>
+    <RouterLink :to="{name: 'movies'}">Movies List</RouterLink>
     <RouterLink to="/about">About Us</RouterLink>
     <RouterLink to="/contact">Contact</RouterLink>
   </nav>
